@@ -1,0 +1,33 @@
+{
+  "name": "@cordfuse/nux-qr",
+  "version": "1.0.0",
+  "description": "NUX MightyAmp QR preset encoder — generates decorated QR PNG cards from preset JSON",
+  "type": "module",
+  "bin": {
+    "nux-qr": "./dist/qr-generator.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun build src/qr-generator.ts --outdir dist --target node --format esm",
+    "dev": "bun src/qr-generator.ts"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.68",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "Steve Krisjanovs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cordfuse/nux-qr.git"
+  }
+}
