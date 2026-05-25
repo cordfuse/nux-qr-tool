@@ -41,12 +41,12 @@ npm install @cordfuse/nux-qr-tool
 ## CLI Usage
 
 ```bash
-npx @cordfuse/nux-qr-tool <preset-json-file> [--output <dir>]
+npx @cordfuse/nux-qr-tool <preset-json-file> [--output <dir>] [--app-name <name>] [--app-version <ver>]
 ```
 
 Reads the preset JSON, encodes the NUX QR payload, generates a decorated PNG, writes it to `<dir>/<artist>-<song>.png`, and prints the full output path to stdout.
 
-The output directory defaults to the current working directory. Use `--output` (or `-o`) to write elsewhere.
+The output directory defaults to the current working directory. Use `--output` (or `-o`) to write elsewhere. Use `--app-name` and `--app-version` to override the branding shown in the card header (defaults to `ToneAI` and the package version).
 
 ### Example
 

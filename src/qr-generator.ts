@@ -2,7 +2,7 @@
  * qr-generator.ts — NUX MightyAmp QR preset encoder
  *
  * Usage:
- *   npx @cordfuse/nux-qr-tool <params-json-file> [--output <dir>]
+ *   npx @cordfuse/nux-qr-tool <params-json-file> [--output <dir>] [--app-name <name>] [--app-version <ver>]
  *
  * The JSON file must contain preset params plus metadata:
  *   { "artist": "...", "song": "...", "device": "plugpro", "amp": {...}, ... }
@@ -350,14 +350,24 @@ export async function decorateQR(
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
+function parseFlag(args: string[], ...flags: string[]): string | undefined {
+  const idx = args.findIndex(a => flags.includes(a))
+  return idx !== -1 ? args[idx + 1] : undefined
+}
+
 async function main() {
   const args = process.argv.slice(2)
-  const outputFlagIdx = args.findIndex(a => a === '--output' || a === '-o')
-  const outDir = outputFlagIdx !== -1 ? resolve(args[outputFlagIdx + 1]) : process.cwd()
-  const jsonPath = args.find((a, i) => !a.startsWith('-') && i !== outputFlagIdx + 1)
+  const flagNames = ['--output', '-o', '--app-name', '--app-version']
+  const flagValueIdxs = new Set<number>()
+  flagNames.forEach(f => { const i = args.indexOf(f); if (i !== -1) flagValueIdxs.add(i + 1) })
+
+  const outDir = resolve(parseFlag(args, '--output', '-o') ?? process.cwd())
+  const appName = parseFlag(args, '--app-name')
+  const appVersion = parseFlag(args, '--app-version')
+  const jsonPath = args.find((a, i) => !a.startsWith('-') && !flagValueIdxs.has(i))
 
   if (!jsonPath) {
-    console.error('Usage: npx @cordfuse/nux-qr-tool <params-json-file> [--output <dir>]')
+    console.error('Usage: npx @cordfuse/nux-qr-tool <params-json-file> [--output <dir>] [--app-name <name>] [--app-version <ver>]')
     process.exit(1)
   }
 
@@ -366,7 +376,6 @@ async function main() {
   const device = DEVICES[params.device]
   if (!device) { console.error(`Unknown device: ${params.device}`); process.exit(1) }
 
-  // Encode QR
   const qrString = buildQRString(params)
   const qrPng = await QRCode.toBuffer(qrString, {
     errorCorrectionLevel: 'H',
@@ -375,10 +384,11 @@ async function main() {
     color: { dark: '#000000', light: '#ffffff' },
   }) as Buffer
 
-  // Decorate
-  const decorated = await decorateQR(qrPng, params.artist, params.song, params.device, device.displayName)
+  const decorated = await decorateQR(
+    qrPng, params.artist, params.song, params.device, device.displayName,
+    { ...(appName ? { appName } : {}), ...(appVersion ? { appVersion } : {}) },
+  )
 
-  // Save
   const slug = `${params.artist}-${params.song}`
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
