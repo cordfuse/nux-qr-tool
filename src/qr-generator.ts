@@ -22,7 +22,7 @@ const VERSION: string = JSON.parse(readFileSync(resolve(__dirname, '../package.j
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-type DeviceType =
+export type DeviceType =
   | 'plugpro' | 'space' | 'litemk2' | '8btmk2' | '20btmk2' | '40btmk2' | '60btmk2'
   | 'plugair_v1' | 'plugair_v2' | 'mightyair_v1' | 'mightyair_v2' | 'mightygo'
   | 'lite' | '8bt' | '2040bt' | '40bt'
@@ -34,7 +34,7 @@ interface DeviceConfig {
   displayName: string
 }
 
-const DEVICES: Record<DeviceType, DeviceConfig> = {
+export const DEVICES: Record<DeviceType, DeviceConfig> = {
   plugpro:      { deviceQRId: 15, deviceQRVersion: 1, format: 'pro',      displayName: 'Mighty Plug Pro' },
   space:        { deviceQRId: 15, deviceQRVersion: 1, format: 'pro',      displayName: 'Mighty Space' },
   litemk2:      { deviceQRId: 19, deviceQRVersion: 1, format: 'pro',      displayName: 'Mighty Lite MkII' },
@@ -64,7 +64,7 @@ interface EffectParams   { id: number; enabled: boolean; p1: number; p2: number;
 interface EQParams        { id: number; enabled: boolean; bands: number[] }
 interface WahParams       { enabled: boolean; pedal: number }
 
-interface PresetParams {
+export interface PresetParams {
   // Metadata (not encoded into QR)
   artist: string
   song: string
@@ -182,7 +182,7 @@ function build2040BTPayload(p: PresetParams): Buffer {
   return data
 }
 
-function buildQRString(p: PresetParams): string {
+export function buildQRString(p: PresetParams): string {
   const device = DEVICES[p.device]
   if (!device) throw new Error(`Unknown device: ${p.device}`)
   let payload: Buffer
@@ -214,7 +214,7 @@ function b(v: unknown, fallback: boolean): boolean {
 
 const GENERIC_NAMES = new Set(['my tone','custom tone','preset','guitar tone','bass tone','my preset','tone','custom preset','unnamed tone'])
 
-function coerceParams(raw: Record<string, unknown>): PresetParams {
+export function coerceParams(raw: Record<string, unknown>): PresetParams {
   const device = (raw.device as DeviceType) ?? 'plugpro'
   const amp = (raw.amp as Record<string, unknown>) ?? {}
   const cab = (raw.cabinet as Record<string, unknown>) ?? {}
