@@ -288,13 +288,16 @@ const ACCENT    = '#e63946'
 const TEXT_MAIN = '#ffffff'
 const TEXT_SUB  = '#aaaaaa'
 
-async function decorateQR(
+export async function decorateQR(
   qrPng: Buffer,
   artist: string,
   song: string,
   deviceId: string,
   deviceName: string,
+  options?: { appName?: string; appVersion?: string },
 ): Promise<Buffer> {
+  const appName = options?.appName ?? 'ToneAI'
+  const appVersion = options?.appVersion ?? VERSION
   const hasEmbeddedName = PRO_DEVICES.has(deviceId as DeviceType)
   const canvas = createCanvas(TOTAL_W, TOTAL_H)
   const ctx = canvas.getContext('2d')
@@ -307,12 +310,12 @@ async function decorateQR(
   ctx.fillStyle = ACCENT
   ctx.textAlign = 'left'
   ctx.textBaseline = 'middle'
-  ctx.fillText('ToneAI', PADDING, HEADER_H / 2)
+  ctx.fillText(appName, PADDING, HEADER_H / 2)
 
   ctx.font = '13px Arial'
   ctx.fillStyle = TEXT_SUB
   ctx.textAlign = 'right'
-  ctx.fillText(`v${VERSION}`, TOTAL_W - PADDING, HEADER_H / 2)
+  ctx.fillText(`v${appVersion}`, TOTAL_W - PADDING, HEADER_H / 2)
 
   ctx.fillStyle = ACCENT
   ctx.globalAlpha = 0.4
@@ -387,4 +390,6 @@ async function main() {
   console.log(outPath)
 }
 
-main().catch(err => { console.error(err.message); process.exit(1) })
+const isMain = process.argv[1] === fileURLToPath(import.meta.url)
+  || process.argv[1]?.endsWith('qr-generator.js')
+if (isMain) main().catch(err => { console.error(err.message); process.exit(1) })

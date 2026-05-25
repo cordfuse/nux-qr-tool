@@ -1,11 +1,12 @@
 {
   "name": "@cordfuse/nux-qr-tool",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "NUX MightyAmp QR preset encoder — generates decorated QR PNG cards from preset JSON",
   "type": "module",
   "bin": {
     "nux-qr-tool": "./dist/qr-generator.js"
   },
+  "exports": "./dist/qr-generator.js",
   "files": [
     "dist"
   ],
