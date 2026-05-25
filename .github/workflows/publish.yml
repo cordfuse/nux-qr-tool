@@ -1,0 +1,75 @@
+name: Publish — nux-qr-tool
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build
+        run: bun run build
+
+      - name: Verify build output
+        run: ls dist/qr-generator.js
+
+      - name: Pack tarball
+        run: npm pack
+
+      - name: Compute version without v prefix
+        id: vinfo
+        run: echo "vnum=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body: |
+            **Install:**
+
+            ```sh
+            npx @cordfuse/nux-qr-tool <preset.json>
+            ```
+
+            Or install globally:
+
+            ```sh
+            npm install -g @cordfuse/nux-qr-tool
+            ```
+          files: |
+            cordfuse-nux-qr-tool-*.tgz
+
+      - name: Determine npm dist-tag
+        id: npmtag
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == *-* ]]; then
+            echo "tag=next" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to npm
+        if: ${{ env.NPM_TOKEN != '' }}
+        run: npm publish --access public --tag ${{ steps.npmtag.outputs.tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
