@@ -41,10 +41,12 @@ npm install @cordfuse/nux-qr-tool
 ## CLI Usage
 
 ```bash
-npx @cordfuse/nux-qr-tool <preset-json-file>
+npx @cordfuse/nux-qr-tool <preset-json-file> [--output <dir>]
 ```
 
-Reads the preset JSON, encodes the NUX QR payload, generates a decorated PNG, writes it to `./output/<artist>-<song>.png`, and prints the full output path to stdout.
+Reads the preset JSON, encodes the NUX QR payload, generates a decorated PNG, writes it to `<dir>/<artist>-<song>.png`, and prints the full output path to stdout.
+
+The output directory defaults to the current working directory. Use `--output` (or `-o`) to write elsewhere.
 
 ### Example
 
@@ -66,10 +68,13 @@ cat > preset.json << 'EOF'
 EOF
 
 npx @cordfuse/nux-qr-tool preset.json
-# → ./output/led-zeppelin-whole-lotta-love.png
+# → /current/working/dir/led-zeppelin-whole-lotta-love.png
+
+npx @cordfuse/nux-qr-tool preset.json --output ./cards
+# → ./cards/led-zeppelin-whole-lotta-love.png
 ```
 
-The output directory is created automatically if it doesn't exist. The output path is always relative to the current working directory — run from the directory where you want `./output/` to appear.
+The output directory is created automatically if it doesn't exist.
 
 ---
 

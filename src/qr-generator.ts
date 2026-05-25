@@ -2,12 +2,12 @@
  * qr-generator.ts — NUX MightyAmp QR preset encoder
  *
  * Usage:
- *   npx @cordfuse/nux-qr-tool <params-json-file>
+ *   npx @cordfuse/nux-qr-tool <params-json-file> [--output <dir>]
  *
  * The JSON file must contain preset params plus metadata:
  *   { "artist": "...", "song": "...", "device": "plugpro", "amp": {...}, ... }
  *
- * Outputs a decorated PNG to ./output/<artist>-<song>.png
+ * Outputs a decorated PNG to <dir>/<artist>-<song>.png (default: CWD)
  * Prints the output path to stdout on success.
  */
 
@@ -351,9 +351,13 @@ export async function decorateQR(
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const jsonPath = process.argv[2]
+  const args = process.argv.slice(2)
+  const outputFlagIdx = args.findIndex(a => a === '--output' || a === '-o')
+  const outDir = outputFlagIdx !== -1 ? resolve(args[outputFlagIdx + 1]) : process.cwd()
+  const jsonPath = args.find((a, i) => !a.startsWith('-') && i !== outputFlagIdx + 1)
+
   if (!jsonPath) {
-    console.error('Usage: npx tsx src/qr-generator.ts <params-json-file>')
+    console.error('Usage: npx @cordfuse/nux-qr-tool <params-json-file> [--output <dir>]')
     process.exit(1)
   }
 
@@ -381,7 +385,6 @@ async function main() {
     .replace(/^-|-$/g, '')
     .slice(0, 60)
 
-  const outDir = resolve('./output')
   mkdirSync(outDir, { recursive: true })
   const outPath = join(outDir, `${slug}.png`)
 
