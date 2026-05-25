@@ -2,7 +2,7 @@
  * qr-generator.ts — NUX MightyAmp QR preset encoder
  *
  * Usage:
- *   npx @cordfuse/nux-qr <params-json-file>
+ *   npx @cordfuse/nux-qr-tool <params-json-file>
  *
  * The JSON file must contain preset params plus metadata:
  *   { "artist": "...", "song": "...", "device": "plugpro", "amp": {...}, ... }
