@@ -405,4 +405,5 @@ async function main() {
 
 const isMain = process.argv[1] === fileURLToPath(import.meta.url)
   || process.argv[1]?.endsWith('qr-generator.js')
+  || process.argv[1]?.endsWith('nux-qr-tool')
 if (isMain) main().catch(err => { console.error(err.message); process.exit(1) })
