@@ -1,6 +1,6 @@
 {
   "name": "@cordfuse/nux-qr-tool",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "NUX MightyAmp QR preset encoder — generates decorated QR PNG cards from preset JSON",
   "type": "module",
   "bin": {
@@ -10,17 +10,21 @@
   "types": "./index.d.ts",
   "files": [
     "dist",
-    "index.d.ts"
+    "index.d.ts",
+    "assets/fonts/LICENSE"
   ],
   "scripts": {
-    "build": "bun build src/qr-generator.ts --outdir dist --target node --format esm --external @napi-rs/canvas && node -e \"const fs=require('fs'),f='dist/qr-generator.js';fs.writeFileSync(f,'#!/usr/bin/env node\\n'+fs.readFileSync(f,'utf8'))\"",
+    "gen-fonts": "node scripts/gen-fonts.mjs",
+    "build": "bun build src/qr-generator.ts --outdir dist --target node --format esm && node -e \"const fs=require('fs'),f='dist/qr-generator.js';fs.writeFileSync(f,'#!/usr/bin/env node\\n'+fs.readFileSync(f,'utf8'))\"",
     "dev": "bun src/qr-generator.ts"
   },
   "dependencies": {
-    "@napi-rs/canvas": "^0.1.68",
+    "opentype.js": "^2.0.0",
+    "pureimage": "^0.4.18",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
+    "@types/opentype.js": "^1.3.10",
     "bun-types": "latest",
     "typescript": "^5.0.0"
   },
